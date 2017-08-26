@@ -1,25 +1,13 @@
 import {stringify} from 'querystring'
 import * as fetch from 'isomorphic-fetch'
 
-interface FxHook<S> {
+export interface FxHook<S> {
   (dispatch, getState: () => S, extraArgs: any, response: any): any
 }
-
-type TActions = string[]
-
-const handleError = async response => {
-  const message = await response.json()
-  return new Error(JSON.stringify({
-    code: response.status,
-    message
-  }))
-}
-
-interface Transform<S> {
+export interface Transform<S> {
   query?(query: any, getState: () => S): any
 }
-
-interface BaseOption<S> {
+export interface BaseOption<S> {
   headers?: any
   transform?: Transform<S>
   success?: FxHook<S>
@@ -27,12 +15,11 @@ interface BaseOption<S> {
 
   condition?(...args): boolean
 }
-
-interface GetOption<S> extends BaseOption<S> {
+export interface GetOption<S> extends BaseOption<S> {
   query?: any
 }
 
-export const GET = <S>(url, actions: TActions, {query, headers, condition, success, fail, transform = {}}: GetOption<S> = {}) => {
+export const GET = <S>(url, actions: Actions, {query, headers, condition, success, fail, transform = {}}: GetOption<S> = {}) => {
   const [pending, ok, err] = actions
   return async (dispatch, getState, extraArgs) => {
     if (condition && !condition(dispatch, getState, extraArgs)) {
@@ -79,11 +66,11 @@ export const GET = <S>(url, actions: TActions, {query, headers, condition, succe
   }
 }
 
-interface PostOption<S> extends BaseOption<S> {
+export interface PostOption<S> extends BaseOption<S> {
   body?: any
 }
 
-export const POST = <S>(url, actions: TActions, {body, headers, success, fail}: PostOption<S> = {}) => {
+export const POST = <S>(url, actions: Actions, {body, headers, success, fail}: PostOption<S> = {}) => {
   const [pending, ok, err] = actions
 
   return async (dispatch, getState, extraArgs) => {
@@ -119,11 +106,11 @@ export const POST = <S>(url, actions: TActions, {body, headers, success, fail}: 
   }
 }
 
-interface PutOption<S> extends BaseOption<S> {
+export interface PutOption<S> extends BaseOption<S> {
   body?: any
 }
 
-export const PUT = <S>(url, actions: TActions, {headers, body, success}: PutOption<S> = {}) => {
+export const PUT = <S>(url, actions: Actions, {headers, body, success}: PutOption<S> = {}) => {
   const [pending, ok, err] = actions
 
   return async (dispatch, getState, extraArgs) => {
@@ -157,11 +144,11 @@ export const PUT = <S>(url, actions: TActions, {headers, body, success}: PutOpti
   }
 }
 
-interface PatchOption<S> extends BaseOption<S> {
+export interface PatchOption<S> extends BaseOption<S> {
   body?: any
 }
 
-export const PATCH = <S>(url, actions: TActions, {headers, body, success, fail}: PatchOption<S> = {}) => {
+export const PATCH = <S>(url, actions: Actions, {headers, body, success, fail}: PatchOption<S> = {}) => {
   const [pending, ok, err] = actions
 
   return async (dispatch, getState, extraArgs) => {
@@ -195,7 +182,7 @@ export const PATCH = <S>(url, actions: TActions, {headers, body, success, fail}:
   }
 }
 
-interface PatchOption<S> extends BaseOption<S> {
+export interface PatchOption<S> extends BaseOption<S> {
   query?: any
 }
 
@@ -235,4 +222,12 @@ export const DELETE = <S>(url, actions: string[], {headers, query}: PatchOption<
   }
 }
 
+const handleError = async response => {
+  const message = await response.json()
+  return new Error(JSON.stringify({
+    code: response.status,
+    message
+  }))
+}
 
+type Actions = [string, string, string]

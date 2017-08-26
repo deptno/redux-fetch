@@ -1,36 +1,33 @@
-type TAction = string|string[]|((err: string) => string);
-type TActions = TAction[];
-
-interface defaultArguments {
-    okHook?: (args) => any;
-    failHook?: (args) => any;
+export interface FxHook<S> {
+    (dispatch: any, getState: () => S, extraArgs: any, response: any): any;
 }
-interface GetArguments extends defaultArguments {
-    url: string;
-    actions: TActions;
-    query?: any;
-    useLatest?: boolean;
+export interface Transform<S> {
+    query?(query: any, getState: () => S): any;
 }
-
-interface PostArguments extends defaultArguments {
-    url: string;
-    actions: TActions;
-    body?: any;
+export interface BaseOption<S> {
+    headers?: any;
+    transform?: Transform<S>;
+    success?: FxHook<S>;
+    fail?: FxHook<S>;
+    condition?(...args: any[]): boolean;
 }
-
-declare function GET(arg: GetArguments): boolean;
-declare function POST(arg: PostArguments): boolean;
-declare function PUT(arg: PostArguments): boolean;
-declare function PATCH(arg: PostArguments): boolean;
-
-interface Action {
-    type: string;
+export interface GetOption<S> extends BaseOption<S> {
     query?: any;
 }
-interface OkAction {
-    payload: any;
-}
-interface ErrAction {
-    error: Error;
+export declare const GET: <S>(url: any, actions: [string, string, string], {query, headers, condition, success, fail, transform}?: GetOption<S>) => (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
+export interface PostOption<S> extends BaseOption<S> {
     body?: any;
 }
+export declare const POST: <S>(url: any, actions: [string, string, string], {body, headers, success, fail}?: PostOption<S>) => (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
+export interface PutOption<S> extends BaseOption<S> {
+    body?: any;
+}
+export declare const PUT: <S>(url: any, actions: [string, string, string], {headers, body, success}?: PutOption<S>) => (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
+export interface PatchOption<S> extends BaseOption<S> {
+    body?: any;
+}
+export declare const PATCH: <S>(url: any, actions: [string, string, string], {headers, body, success, fail}?: PatchOption<S>) => (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
+export interface PatchOption<S> extends BaseOption<S> {
+    query?: any;
+}
+export declare const DELETE: <S>(url: any, actions: string[], {headers, query}?: PatchOption<S>) => (dispatch: any, getState: any) => Promise<boolean>;
