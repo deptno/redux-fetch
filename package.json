@@ -1,5 +1,5 @@
 {
-  "name": "redux-fetch-actions",
+  "name": "redux-fetch",
   "version": "0.0.1",
   "description": "action, dispatch, fetch",
   "main": "index.js",
