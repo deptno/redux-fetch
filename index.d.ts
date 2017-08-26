@@ -31,3 +31,9 @@ export interface PatchOption<S> extends BaseOption<S> {
     query?: any;
 }
 export declare const DELETE: <S>(url: any, actions: string[], {headers, query}?: PatchOption<S>) => (dispatch: any, getState: any) => Promise<boolean>;
+export interface ReduxFetchAction {
+    type: string;
+    query?: any;
+    error?: Error;
+    body?: any;
+}

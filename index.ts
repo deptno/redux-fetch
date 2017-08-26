@@ -231,3 +231,10 @@ const handleError = async response => {
 }
 
 type Actions = [string, string, string]
+
+export interface ReduxFetchAction {
+  type: string
+  query?: any
+  error?: Error
+  body?: any
+}
