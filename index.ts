@@ -44,16 +44,16 @@ export interface DeleteOption<S> extends BaseOption<S> {
 export function GET<S>(url, actions: Actions, a: GetOption<S> = {}) {
   return common(url, actions, {...a, method: 'GET'} as any)
 }
-export function POST<S>(url, actions: Actions, a: GetOption<S> = {}) {
+export function POST<S>(url, actions: Actions, a: PostOption<S> = {}) {
   return common(url, actions, {...a, method: 'POST'} as any)
 }
-export function PUT<S>(url, actions: Actions, a: GetOption<S> = {}) {
+export function PUT<S>(url, actions: Actions, a: PutOption<S> = {}) {
   return common(url, actions, {...a, method: 'PUT'} as any)
 }
-export function PATCH<S>(url, actions: Actions, a: GetOption<S> = {}) {
+export function PATCH<S>(url, actions: Actions, a: PatchOption<S> = {}) {
   return common(url, actions, {...a, method: 'PATCH'} as any)
 }
-export function DELETE<S>(url, actions: Actions, a: GetOption<S> = {}) {
+export function DELETE<S>(url, actions: Actions, a: DeleteOption<S> = {}) {
   return common(url, actions, {...a, method: 'DELETE'} as any)
 }
 
@@ -101,12 +101,10 @@ function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, q
         ? success(dispatch, getState, extraArgs, json)
         : json
 
-      //todo: dispatch success
       dispatch({type: ok, query, body, payload})
       return true
     } catch (error) {
       console.error(err, error)
-      //todo: dispatch fail
       dispatch({
         type:  err,
         error: fail ? fail(dispatch, getState, extraArgs, error) : error,
