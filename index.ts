@@ -72,15 +72,18 @@ function _transform<S>(getState: () => S, params: RequestParam, transformer: Tra
 
 function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, query: any, body: any } = {} as any) {
   const [pending, ok, err]                                                     = actions
-  let {method, query, body, headers, condition, success, fail, transform = {}} = a
+  let {method, query, body, headers, condition, success, fail, transform} = a
 
   return async (dispatch, getState, extraArgs) => {
     if (condition && !condition(dispatch, getState, extraArgs)) {
       return false
     }
 
-    const {query, body} = _transform(getState, {query: a.query, body: a.body}, transform)
-    //todo: dispatch reuqest
+    const originalParam = {query: a.query, body: a.body}
+    const {query, body} = transform
+      ? _transform(getState, originalParam, transform)
+      : originalParam
+
     dispatch({type: pending, query})
     try {
       const target     = query ? `${url}?${stringify(query)}` : url

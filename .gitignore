@@ -2,7 +2,6 @@
 
 .idea
 node_modules
-index.js
 **/*.js
 **/*.js.map
 **/*.d.ts

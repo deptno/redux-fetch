@@ -81,17 +81,19 @@ function common(url, actions, a) {
     var _this = this;
     if (a === void 0) { a = {}; }
     var pending = actions[0], ok = actions[1], err = actions[2];
-    var method = a.method, query = a.query, body = a.body, headers = a.headers, condition = a.condition, success = a.success, fail = a.fail, _a = a.transform, transform = _a === void 0 ? {} : _a;
+    var method = a.method, query = a.query, body = a.body, headers = a.headers, condition = a.condition, success = a.success, fail = a.fail, transform = a.transform;
     return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
-        var _a, query, body, target, param, response, json, payload, error_1;
+        var originalParam, _a, query, body, target, param, response, json, payload, error_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     if (condition && !condition(dispatch, getState, extraArgs)) {
                         return [2 /*return*/, false];
                     }
-                    _a = _transform(getState, { query: a.query, body: a.body }, transform), query = _a.query, body = _a.body;
-                    //todo: dispatch reuqest
+                    originalParam = { query: a.query, body: a.body };
+                    _a = transform
+                        ? _transform(getState, originalParam, transform)
+                        : originalParam, query = _a.query, body = _a.body;
                     dispatch({ type: pending, query: query });
                     _b.label = 1;
                 case 1:
