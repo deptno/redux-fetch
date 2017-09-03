@@ -13,12 +13,12 @@ export interface BaseOption<S> {
     condition?(...args: any[]): boolean;
 }
 export declare type Actions = [string, string, string];
-export interface ReduxFetchAction {
+export interface ReduxFetchAction<T> {
     type: string;
     query?: any;
     body?: any;
     error?: Error;
-    payload?: any;
+    payload?: T;
 }
 export interface GetOption<S> extends BaseOption<S> {
     query?: any;
