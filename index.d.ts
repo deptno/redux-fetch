@@ -6,7 +6,7 @@ export interface Transform<S> {
     body?(body: any, getState: () => S): any;
 }
 export interface BaseOption<S> {
-    headers?: any;
+    headers?: (getState) => any | any;
     transform?: Transform<S>;
     success?: FxHook<S>;
     fail?: FxHook<S>;

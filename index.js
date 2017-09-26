@@ -99,7 +99,10 @@ function common(url, actions, a) {
                 case 1:
                     _b.trys.push([1, 6, , 7]);
                     target = query ? url + "?" + querystring_1.stringify(query) : url;
-                    param = { method: method, headers: headers };
+                    param = {
+                        method: method,
+                        headers: typeof headers === 'function' ? headers(getState) : headers
+                    };
                     if (body) {
                         param.body = JSON.stringify(body);
                     }

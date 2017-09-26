@@ -9,7 +9,7 @@ export interface Transform<S> {
   body?(body: any, getState: () => S): any
 }
 export interface BaseOption<S> {
-  headers?: any
+  headers?: (getState) => any|any
   transform?: Transform<S>
   success?: FxHook<S>
   fail?: FxHook<S>
@@ -87,7 +87,10 @@ function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, q
     dispatch({type: pending, query})
     try {
       const target     = query ? `${url}?${stringify(query)}` : url
-      const param: any = {method, headers}
+      const param: any = {
+        method,
+        headers: typeof headers === 'function' ? headers(getState) : headers
+      }
 
       if (body) {
         param.body = JSON.stringify(body)
