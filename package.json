@@ -1,6 +1,6 @@
 {
   "name": "redux-fetch",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "action, dispatch, fetch",
   "main": "index.js",
   "author": "deptno@gmail.com",
