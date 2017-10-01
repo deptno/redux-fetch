@@ -1,4 +1,12 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -34,261 +42,115 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var querystring_1 = require("querystring");
 var fetch = require("isomorphic-fetch");
-var handleError = function (response) { return __awaiter(_this, void 0, void 0, function () {
-    var message;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, response.json()];
-            case 1:
-                message = _a.sent();
-                return [2 /*return*/, new Error(JSON.stringify({
-                        code: response.status,
-                        message: message
-                    }))];
-        }
-    });
-}); };
-exports.GET = function (url, actions, _a) {
-    var _b = _a === void 0 ? {} : _a, query = _b.query, headers = _b.headers, condition = _b.condition, success = _b.success, fail = _b.fail, _c = _b.transform, transform = _c === void 0 ? {} : _c;
+function GET(url, actions, a) {
+    if (a === void 0) { a = {}; }
+    return common(url, actions, __assign({}, a, { method: 'GET' }));
+}
+exports.GET = GET;
+function POST(url, actions, a) {
+    if (a === void 0) { a = {}; }
+    return common(url, actions, __assign({}, a, { method: 'POST' }));
+}
+exports.POST = POST;
+function PUT(url, actions, a) {
+    if (a === void 0) { a = {}; }
+    return common(url, actions, __assign({}, a, { method: 'PUT' }));
+}
+exports.PUT = PUT;
+function PATCH(url, actions, a) {
+    if (a === void 0) { a = {}; }
+    return common(url, actions, __assign({}, a, { method: 'PATCH' }));
+}
+exports.PATCH = PATCH;
+function DELETE(url, actions, a) {
+    if (a === void 0) { a = {}; }
+    return common(url, actions, __assign({}, a, { method: 'DELETE' }));
+}
+exports.DELETE = DELETE;
+function _transform(getState, params, transformer) {
+    var ret = {};
+    for (var key in transformer) {
+        ret[key] = transformer[key](getState, params[key]);
+    }
+    return ret;
+}
+function common(url, actions, a) {
+    var _this = this;
+    if (a === void 0) { a = {}; }
     var pending = actions[0], ok = actions[1], err = actions[2];
+    var method = a.method, query = a.query, body = a.body, headers = a.headers, condition = a.condition, success = a.success, fail = a.fail, transform = a.transform;
     return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
-        var target, response, json, payload, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var originalParam, _a, query, body, target, param, response, json, payload, error_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     if (condition && !condition(dispatch, getState, extraArgs)) {
                         return [2 /*return*/, false];
                     }
-                    if (transform.query) {
-                        query = transform.query(query, getState);
-                    }
-                    dispatch({
-                        type: pending,
-                        query: query
-                    });
-                    target = query ? url + "?" + querystring_1.stringify(query) : url;
-                    _a.label = 1;
+                    originalParam = { query: a.query, body: a.body };
+                    _a = transform
+                        ? _transform(getState, originalParam, transform)
+                        : originalParam, query = _a.query, body = _a.body;
+                    dispatch({ type: pending, query: query });
+                    _b.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, fetch(target, {
-                            method: 'GET',
-                            headers: headers
-                        })];
+                    _b.trys.push([1, 6, , 7]);
+                    target = query ? url + "?" + querystring_1.stringify(query) : url;
+                    param = {
+                        method: method,
+                        headers: typeof headers === 'function' ? headers(getState) : headers
+                    };
+                    if (body) {
+                        param.body = JSON.stringify(body);
+                    }
+                    return [4 /*yield*/, fetch(target, param)];
                 case 2:
-                    response = _a.sent();
+                    response = _b.sent();
                     if (!(response.status >= 400)) return [3 /*break*/, 4];
                     return [4 /*yield*/, handleError(response)];
-                case 3: throw _a.sent();
+                case 3: throw _b.sent();
                 case 4: return [4 /*yield*/, response.json()];
                 case 5:
-                    json = _a.sent();
+                    json = _b.sent();
                     payload = success
                         ? success(dispatch, getState, extraArgs, json)
                         : json;
-                    dispatch({
-                        type: ok,
-                        query: query,
-                        payload: payload
-                    });
+                    dispatch({ type: ok, query: query, body: body, payload: payload });
                     return [2 /*return*/, true];
                 case 6:
-                    error_1 = _a.sent();
+                    error_1 = _b.sent();
                     console.error(err, error_1);
                     dispatch({
                         type: err,
                         error: fail ? fail(dispatch, getState, extraArgs, error_1) : error_1,
                         query: query,
+                        body: body
                     });
                     return [2 /*return*/, false];
                 case 7: return [2 /*return*/];
             }
         });
     }); };
-};
-exports.POST = function (url, actions, _a) {
-    var _b = _a === void 0 ? {} : _a, body = _b.body, headers = _b.headers, success = _b.success, fail = _b.fail;
-    var pending = actions[0], ok = actions[1], err = actions[2];
-    return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
-        var response, json, payload, error_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+}
+function handleError(response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, _b, _c, _d;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
-                    dispatch({ type: pending });
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, fetch(url, {
-                            method: 'POST',
-                            headers: headers,
-                            body: JSON.stringify(body)
-                        })];
-                case 2:
-                    response = _a.sent();
-                    if (!(response.status >= 400)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, handleError(response)];
-                case 3: throw _a.sent();
-                case 4: return [4 /*yield*/, response.json()];
-                case 5:
-                    json = _a.sent();
-                    payload = success
-                        ? success(dispatch, getState, extraArgs, json)
-                        : json;
-                    dispatch({
-                        type: ok,
-                        body: body,
-                        payload: payload
-                    });
-                    return [2 /*return*/, true];
-                case 6:
-                    error_2 = _a.sent();
-                    dispatch({
-                        type: err,
-                        body: body,
-                        error: fail ? fail(dispatch, getState, extraArgs, error_2) : error_2
-                    });
-                    return [2 /*return*/, false];
-                case 7: return [2 /*return*/];
+                    _a = Error.bind;
+                    _c = (_b = JSON).stringify;
+                    _d = {
+                        code: response.status
+                    };
+                    return [4 /*yield*/, response.json()];
+                case 1: return [2 /*return*/, new (_a.apply(Error, [void 0, _c.apply(_b, [(_d.message = _e.sent(),
+                                _d)])]))()];
             }
         });
-    }); };
-};
-exports.PUT = function (url, actions, _a) {
-    var _b = _a === void 0 ? {} : _a, headers = _b.headers, body = _b.body, success = _b.success;
-    var pending = actions[0], ok = actions[1], err = actions[2];
-    return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
-        var response, json, payload, error_3;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    dispatch({ type: pending });
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, fetch(url, {
-                            method: 'PUT',
-                            headers: headers,
-                            body: JSON.stringify(body)
-                        })];
-                case 2:
-                    response = _a.sent();
-                    if (!(response.status >= 400)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, handleError(response)];
-                case 3: throw _a.sent();
-                case 4: return [4 /*yield*/, response.json()];
-                case 5:
-                    json = _a.sent();
-                    payload = success
-                        ? success(dispatch, getState, extraArgs, json)
-                        : json;
-                    dispatch({
-                        type: ok,
-                        payload: payload
-                    });
-                    return [2 /*return*/, true];
-                case 6:
-                    error_3 = _a.sent();
-                    dispatch({
-                        type: err,
-                        error: error_3
-                    });
-                    return [2 /*return*/, false];
-                case 7: return [2 /*return*/];
-            }
-        });
-    }); };
-};
-exports.PATCH = function (url, actions, _a) {
-    var _b = _a === void 0 ? {} : _a, headers = _b.headers, body = _b.body, success = _b.success, fail = _b.fail;
-    var pending = actions[0], ok = actions[1], err = actions[2];
-    return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
-        var response, json, payload, error_4;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    dispatch({ type: pending });
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 6, , 7]);
-                    return [4 /*yield*/, fetch(url, {
-                            headers: headers,
-                            method: 'PATCH',
-                            body: JSON.stringify(body)
-                        })];
-                case 2:
-                    response = _a.sent();
-                    if (!(response.status >= 400)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, handleError(response)];
-                case 3: throw _a.sent();
-                case 4: return [4 /*yield*/, response.json()];
-                case 5:
-                    json = _a.sent();
-                    payload = success
-                        ? success(dispatch, getState, extraArgs, json)
-                        : json;
-                    dispatch({
-                        type: ok,
-                        payload: payload
-                    });
-                    return [2 /*return*/, true];
-                case 6:
-                    error_4 = _a.sent();
-                    dispatch({
-                        type: err,
-                        error: fail ? fail(dispatch, getState, extraArgs, error_4) : error_4
-                    });
-                    return [2 /*return*/, false];
-                case 7: return [2 /*return*/];
-            }
-        });
-    }); };
-};
-exports.DELETE = function (url, actions, _a) {
-    var _b = _a === void 0 ? {} : _a, headers = _b.headers, query = _b.query;
-    var pending = actions[0], ok = actions[1], err = actions[2];
-    return function (dispatch, getState) { return __awaiter(_this, void 0, void 0, function () {
-        var target, response, error_5;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    dispatch({
-                        type: pending,
-                        query: query
-                    });
-                    target = query ? url + "?" + querystring_1.stringify(query) : url;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 5, , 6]);
-                    return [4 /*yield*/, fetch(target, {
-                            headers: headers,
-                            method: 'DELETE',
-                        })];
-                case 2:
-                    response = _a.sent();
-                    if (!(response.status >= 400)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, handleError(response)];
-                case 3: throw _a.sent();
-                case 4:
-                    dispatch({
-                        type: ok,
-                        payload: response.json(),
-                        query: query,
-                    });
-                    return [2 /*return*/, true];
-                case 5:
-                    error_5 = _a.sent();
-                    dispatch({
-                        type: err,
-                        query: query,
-                        error: error_5
-                    });
-                    return [2 /*return*/, false];
-                case 6: return [2 /*return*/];
-            }
-        });
-    }); };
-};
+    });
+}
 //# sourceMappingURL=index.js.map
