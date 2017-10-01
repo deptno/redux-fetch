@@ -1,6 +1,6 @@
 {
   "name": "redux-fetch",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "action, dispatch, fetch",
   "main": "index.js",
   "author": "deptno@gmail.com",
@@ -19,7 +19,7 @@
     "nock": "^9.0.14",
     "sinon": "^3.2.1",
     "ts-jest": "^20.0.10",
-    "typescript": "^2.4.2"
+    "typescript": "^2.5.3"
   },
   "jest": {
     "transform": {

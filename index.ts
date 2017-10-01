@@ -5,8 +5,8 @@ export interface FxHook<S> {
   (dispatch, getState: () => S, extraArgs: any, response: any): any
 }
 export interface Transform<S> {
-  query?(query: any, getState: () => S): any
-  body?(body: any, getState: () => S): any
+  query?(getState: () => S, query: any): any
+  body?(getState: () => S, body: any): any
 }
 export interface BaseOption<S> {
   headers?: (getState) => any|any
@@ -63,11 +63,11 @@ interface RequestParam {
 }
 
 function _transform<S>(getState: () => S, params: RequestParam, transformer: Transform<S>) {
-  const ret = {}
+  const ret = {} as {query: any, body: any}
   for (let key in transformer) {
-    ret[key] = transformer[key](params[key])
+    ret[key] = transformer[key](getState, params[key])
   }
-  return ret as any
+  return ret
 }
 
 function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, query: any, body: any } = {} as any) {
