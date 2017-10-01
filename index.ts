@@ -9,6 +9,7 @@ export interface Transform<S> {
   body?(getState: () => S, body: any): any
 }
 export interface BaseOption<S> {
+  query?: any
   headers?: (getState) => any|any
   transform?: Transform<S>
   success?: FxHook<S>
@@ -26,7 +27,6 @@ export interface ReduxFetchAction<T> {
   payload?: T
 }
 export interface GetOption<S> extends BaseOption<S> {
-  query?: any
 }
 export interface PostOption<S> extends BaseOption<S> {
   body?: any
@@ -38,7 +38,6 @@ export interface PatchOption<S> extends BaseOption<S> {
   body?: any
 }
 export interface DeleteOption<S> extends BaseOption<S> {
-  query?: any
 }
 
 export function GET<S>(url, actions: Actions, a: GetOption<S> = {}) {

@@ -73,7 +73,7 @@ exports.DELETE = DELETE;
 function _transform(getState, params, transformer) {
     var ret = {};
     for (var key in transformer) {
-        ret[key] = transformer[key](params[key]);
+        ret[key] = transformer[key](getState, params[key]);
     }
     return ret;
 }
