@@ -2,10 +2,11 @@ export interface FxHook<S> {
     (dispatch: any, getState: () => S, extraArgs: any, response: any): any;
 }
 export interface Transform<S> {
-    query?(query: any, getState: () => S): any;
-    body?(body: any, getState: () => S): any;
+    query?(getState: () => S, query: any): any;
+    body?(getState: () => S, body: any): any;
 }
 export interface BaseOption<S> {
+    query?: any;
     headers?: (getState) => any | any;
     transform?: Transform<S>;
     success?: FxHook<S>;
@@ -21,7 +22,6 @@ export interface ReduxFetchAction<T> {
     payload?: T;
 }
 export interface GetOption<S> extends BaseOption<S> {
-    query?: any;
 }
 export interface PostOption<S> extends BaseOption<S> {
     body?: any;
@@ -33,7 +33,6 @@ export interface PatchOption<S> extends BaseOption<S> {
     body?: any;
 }
 export interface DeleteOption<S> extends BaseOption<S> {
-    query?: any;
 }
 export declare function GET<S>(url: any, actions: Actions, a?: GetOption<S>): (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
 export declare function POST<S>(url: any, actions: Actions, a?: PostOption<S>): (dispatch: any, getState: any, extraArgs: any) => Promise<boolean>;
