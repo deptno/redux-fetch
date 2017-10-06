@@ -11,7 +11,7 @@ export interface BaseOption<S> {
     transform?: Transform<S>;
     success?: FxHook<S>;
     fail?: FxHook<S>;
-    responseType?: string;
+    responseType?: 'json' | 'text';
     condition?(...args: any[]): boolean;
 }
 export declare type Actions = [string, string, string];
