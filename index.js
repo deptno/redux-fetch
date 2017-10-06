@@ -81,7 +81,7 @@ function common(url, actions, a) {
     var _this = this;
     if (a === void 0) { a = {}; }
     var pending = actions[0], ok = actions[1], err = actions[2];
-    var method = a.method, query = a.query, body = a.body, headers = a.headers, condition = a.condition, success = a.success, fail = a.fail, transform = a.transform;
+    var method = a.method, query = a.query, body = a.body, headers = a.headers, condition = a.condition, success = a.success, fail = a.fail, transform = a.transform, _a = a.responseType, responseType = _a === void 0 ? 'json' : _a;
     return function (dispatch, getState, extraArgs) { return __awaiter(_this, void 0, void 0, function () {
         var originalParam, _a, query, body, target, param, response, json, payload, error_1;
         return __generator(this, function (_b) {
@@ -112,7 +112,7 @@ function common(url, actions, a) {
                     if (!(response.status >= 400)) return [3 /*break*/, 4];
                     return [4 /*yield*/, handleError(response)];
                 case 3: throw _b.sent();
-                case 4: return [4 /*yield*/, response.json()];
+                case 4: return [4 /*yield*/, response[responseType]()];
                 case 5:
                     json = _b.sent();
                     payload = success
