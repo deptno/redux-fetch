@@ -14,6 +14,7 @@ export interface BaseOption<S> {
   transform?: Transform<S>
   success?: FxHook<S>
   fail?: FxHook<S>
+  responseType?: string
 
   condition?(...args): boolean
 }
@@ -71,7 +72,7 @@ function _transform<S>(getState: () => S, params: RequestParam, transformer: Tra
 
 function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, query: any, body: any } = {} as any) {
   const [pending, ok, err]                                                     = actions
-  let {method, query, body, headers, condition, success, fail, transform} = a
+  const {method, query, body, headers, condition, success, fail, transform, responseType = 'json'} = a
 
   return async (dispatch, getState, extraArgs) => {
     if (condition && !condition(dispatch, getState, extraArgs)) {
@@ -101,7 +102,7 @@ function common<S>(url, actions: Actions, a: BaseOption<S> & { method: string, q
         throw await handleError(response)
       }
 
-      const json    = await response.json()
+      const json    = await response[responseType]()
       const payload = success
         ? success(dispatch, getState, extraArgs, json)
         : json
